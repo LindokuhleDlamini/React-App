@@ -2,6 +2,7 @@
 const PostService = {
     getPosts: async function () {
         const response = await fetch('/posts');
+        console.log(response);
         const body = await response.json();
     
         if(response.status !==200) {
