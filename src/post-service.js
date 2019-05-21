@@ -2,10 +2,9 @@
 const PostService = {
     getPosts: async function () {
         const response = await fetch('/posts');
-        console.log(response);
         const body = await response.json();
     
-        if(response.status !==200) {
+        if(response.status !== 200) {
             throw Error(body.message);
         }
         return body;
@@ -21,7 +20,7 @@ const PostService = {
         return body;
     },
 
-    createPost: async function createPost(post) {
+    createPost: async function (post) {
         const response = await fetch('/post', {
             method: 'POST',
             headers: {
@@ -31,16 +30,16 @@ const PostService = {
                 author: post.author,
                 title: post.title,
                 content: post.content,
-                tags: post.tags}),
-            });
+                tags: post.tags
+            }),
+        });
+        const body = await response.json();
     
-        const body = await response.text();
-    
-        if(response.status !== 200) {
+        if (response.status !== 200) {
             throw Error(body.message);
         }
         return body;
-    },
+    }
 };
 
 export default PostService;

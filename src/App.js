@@ -1,10 +1,23 @@
 import React, { Component } from 'react';
-import PostService from './post-service.js';
-import CreatePost from './create-post.js';
-import Post from './post.js';
-import './App.css';
 import { BrowserRouter as Router, NavLink } from 'react-router-dom';
 import Route from 'react-router-dom/Route';
+
+import PostService from './post-service.js';
+import CreatePost from './create-post.js';
+import './App.css';
+
+const removeTags = (body) => {
+  return(body.replace(/<p>/g, "").replace(/<p>/g, ""));
+};
+
+const Post = (prop) => {
+  return(
+    <div>
+        <h4>{prop.post.title}</h4>
+        <div>{removeTags(prop.post.body)}</div>
+    </div>
+  )
+};
 
 class App extends Component {
 
@@ -23,13 +36,6 @@ class App extends Component {
       },
     };
   }
-  
-
-  getPosts = async => {
-    PostService.getPosts()
-    .then(res => this.setState({ posts: res}))
-    .catch(err => console.log(err));
-  }
 
   getPost = async (event) => {
     PostService.getPost(event.target.id)
@@ -38,12 +44,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getPosts();
-  };
-
-
-  removeTags = (body) => {
-    return(body.replace("<p>", "").replace("</p>", ""));
+    PostService.getPosts()
+    .then(res => this.setState({ posts: res}))
+    .catch(err => console.log(err));
   };
 
   createPostContent = () => {
@@ -55,7 +58,7 @@ class App extends Component {
 
     for(let x = 0; x < posts.length; x++) {
       headers.push(<h4>{posts[x].title} by {posts[x].author} on {posts[x].date}</h4>);
-      body.push(<p>{this.removeTags(posts[x].body).slice(0, 110) + '...'}</p>);
+      body.push(<p>{removeTags(posts[x].body.slice(0, 110)) + '...'}</p>);
       links.push(<NavLink  to="/post" id = {posts[x]._id} onClick={this.getPost.bind(this)}>View</NavLink>);
     }
 
@@ -66,8 +69,6 @@ class App extends Component {
   };
 
   render() {
-    console.log("Render");
-    console.log(this.state);
     return (
         <Router>
           <div className="App">
@@ -93,9 +94,10 @@ class App extends Component {
               return this.createPostContent();
             }}/>
 
-            {/* <Route path="/post" exact strict component = {Post(this.state.post)}/> */}
+            <Route path="/post" exact strict render={() => {
+              return (<Post post={this.state.post} />)
+            }}/>
 
-            <Route path="/post" exact strict render={(routeProps) => (<Post {...routeProps} post={this.state.post} />)}/>
           </div>
         </Router>
     )

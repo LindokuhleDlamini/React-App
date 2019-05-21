@@ -14,43 +14,33 @@ class CreatePost extends Component {
           content: this.refs.content.value,
           tags: this.refs.tags.value
         };
-    
-        this.setState({ responseToPost: PostService.createPost(post) });
-    };
+        
+        PostService.createPost(post)
+        .then((res) => this.setState({ responseToPost: res}));
+    }
 
     render() {
         return (
-        <div className="createPost">
-            <form onSubmit= {this.handleSubmit}>
-            Author:
-            <input
-                type = "text"
-                ref= "author"
-            /> <br/>
-            Title:
-            <input
-                type= "text"
-                ref = "title"
-            /> <br/>
-            Content:
-            <input
-                type= "text"
-                ref = "content"
-            /> <br/>
-            Tags:
-            <input
-                type= "text"
-                ref = "tags"
-            /><br/>
-            <input type="submit" value="Submit"></input>
-            </form>
-            <p>
-                {this.state.responseToPost}
-            </p>
-        </div>
+            <div className="createPost">
+                <form onSubmit= {this.handleSubmit}>
+                    Author:
+                    <input type = "text" ref= "author"/>
+                    <br/>
+                    Title:
+                    <input type= "text" ref = "title"/>
+                    <br/>
+                    Content:
+                    <input type= "text" ref = "content"/>
+                    <br/>
+                    Tags:
+                    <input type= "text" ref = "tags"/>
+                    <br/>
+                    <input type="submit" value="Submit"/>
+                </form>
+                <p>{this.state.responseToPost}</p>
+            </div>
         );
-        
-    };
+    }
 }
 
 export default CreatePost;
