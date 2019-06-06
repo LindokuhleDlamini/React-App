@@ -1,23 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, NavLink } from 'react-router-dom';
 import Route from 'react-router-dom/Route';
+import Moment from 'moment';
 
 import PostService from './post-service.js';
 import CreatePost from './create-post.js';
+import Post from './post.js';
+import RemoveTags from './post.helper.js';
 import './App.css';
-
-const removeTags = (body) => {
-  return(body.replace(/<p>/g, "").replace(/<p>/g, ""));
-};
-
-const Post = (prop) => {
-  return(
-    <div>
-        <h4>{prop.post.title}</h4>
-        <div>{removeTags(prop.post.body)}</div>
-    </div>
-  )
-};
 
 class App extends Component {
 
@@ -55,10 +45,10 @@ class App extends Component {
     let headers = [];
     let body = [];
     let links = [];
-
+    Moment.locale('en');
     for(let x = 0; x < posts.length; x++) {
-      headers.push(<h4>{posts[x].title} by {posts[x].author} on {posts[x].date}</h4>);
-      body.push(<p>{removeTags(posts[x].body.slice(0, 110)) + '...'}</p>);
+      headers.push(<h4>{posts[x].title} by {posts[x].author} on {Moment(posts[x].date).format('LLLL')}</h4>);
+      body.push(<p>{RemoveTags(posts[x].body.slice(0, 110)) + '...'}</p>);
       links.push(<NavLink  to="/post" id = {posts[x]._id} onClick={this.getPost.bind(this)}>View</NavLink>);
     }
 

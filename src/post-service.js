@@ -39,7 +39,23 @@ const PostService = {
             throw Error(body.message);
         }
         return body;
-    }
+    },
+
+    updatePost: async function (id, post) {
+        const response = await fetch(`/post/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(post),
+        });
+        const body = await response.json();
+
+        if (response.status !== 200) {
+            throw Error(body.message);
+        }
+        return body;
+    },
 };
 
 export default PostService;
