@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, NavLink } from 'react-router-dom';
-import Route from 'react-router-dom/Route';
-import Moment from 'moment';
-
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import PostService from './post-service.js';
 import CreatePost from './create-post.js';
+import EditPost from './edit-post.js';
 import Post from './post.js';
-import RemoveTags from './post.helper.js';
+import Posts from './posts.js';
 import './App.css';
 
 class App extends Component {
 
   constructor() {
-    super()
+    super();
     this.state = {
       posts: [],
       post: {
@@ -23,14 +21,8 @@ class App extends Component {
         permalink: '',
         tags: [],
         title: '',
-      },
+      }
     };
-  }
-
-  getPost = async (event) => {
-    PostService.getPost(event.target.id)
-    .then(res => this.setState({post: res}))
-    .catch(err => console.log(err));
   }
 
   componentDidMount() {
@@ -39,23 +31,14 @@ class App extends Component {
     .catch(err => console.log(err));
   };
 
-  createPostContent = () => {
-    let posts = this.state.posts;
-    let postContent = [];
-    let headers = [];
-    let body = [];
-    let links = [];
-    Moment.locale('en');
-    for(let x = 0; x < posts.length; x++) {
-      headers.push(<h4>{posts[x].title} by {posts[x].author} on {Moment(posts[x].date).format('LLLL')}</h4>);
-      body.push(<p>{RemoveTags(posts[x].body.slice(0, 110)) + '...'}</p>);
-      links.push(<NavLink  to="/post" id = {posts[x]._id} onClick={this.getPost.bind(this)}>View</NavLink>);
-    }
-
-    for(let i = 0; i < posts.length; i++) {
-      postContent.push(<div key={posts[i]._id}>{headers[i]}{body[i]}{links[i]}</div>);
-    }
-    return postContent;
+  getPost = async (event) => {
+    PostService.getPost(event.target.id)
+    .then(res => {
+      this.setState({
+        post: res
+      })
+    })
+    .catch(err => console.log(err));
   };
 
   render() {
@@ -64,29 +47,32 @@ class App extends Component {
           <div className="App">
             <ul>
               <li>
-                <NavLink to="/" exact >Home</NavLink>
+                <Link to="/" exact="true" >Home</Link>
               </li>
               <li>
-                <NavLink to="/create" exact >Create</NavLink>
+                <Link to="/create" exact="true" >Create</Link>
               </li>
               <li>
-                <NavLink to="/posts" exact >Posts</NavLink>
+                <Link to="/posts" exact="true" >Posts</Link>
               </li>
             </ul>
             
             <Route path="/" exact strict render={() => {
               return (<h1>Welcome</h1>);
             }}/>
-
-            <Route path="/create" exact strict component={CreatePost}/>
+            <Route path="/create" exact strict component={CreatePost}></Route>
 
             <Route path="/posts" exact strict render={() => {
-              return this.createPostContent();
-            }}/>
+              return (<Posts posts={this.state.posts} handler={this.getPost} />)
+            }}></Route>
+
+            <Route path="/edit" exact strict render={() => {
+              return (<EditPost post={this.state.post}/>);
+            }} ></Route>
 
             <Route path="/post" exact strict render={() => {
               return (<Post post={this.state.post} />)
-            }}/>
+            }}></Route>
 
           </div>
         </Router>

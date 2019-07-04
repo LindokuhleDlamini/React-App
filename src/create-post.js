@@ -1,46 +1,49 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PostService from './post-service.js';
 
-class CreatePost extends Component {
-    state = {
-        responseToPost: ''
-    }
+const CreatePost = () => {
+    return (
+        <div className="createPost">
+            <form onSubmit={handleSubmit}>
+                <label>Author:</label>
+                <input type = "text" name="Author"/>
+                <br/>
+                <label>Title:</label>
+                <input type= "text" name="Title"/>
+                <br/>
+                <label>Content:</label>
+                <input type= "text" name="Content"/>
+                <br/>
+                <label>Tags:</label>
+                <input type= "text" name="Tags"/>
+                <br/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+    );
+}
 
-    handleSubmit = async event => {
-        event.preventDefault();
-        var post = {
-          author: this.refs.author.value,
-          title: this.refs.title.value,
-          content: this.refs.content.value,
-          tags: this.refs.tags.value
-        };
-        
-        PostService.createPost(post)
-        .then((res) => this.setState({ responseToPost: res}));
-    }
+const handleSubmit = (event) => {
+    event.preventDefault();
+    var post = {
+        author: event.target.children.Author.value,
+        title: event.target.children.Title.value,
+        content: event.target.children.Content.value,
+        tags: event.target.children.Tags.value
+    };
+    reset(event);
+    
+    PostService.createPost(post)
+    .then((res) => {
+        alert(`New Post ${res.title} has been created by ${res.author}`);
+    });
+}
 
-    render() {
-        return (
-            <div className="createPost">
-                <form onSubmit= {this.handleSubmit}>
-                    Author:
-                    <input type = "text" ref= "author"/>
-                    <br/>
-                    Title:
-                    <input type= "text" ref = "title"/>
-                    <br/>
-                    Content:
-                    <input type= "text" ref = "content"/>
-                    <br/>
-                    Tags:
-                    <input type= "text" ref = "tags"/>
-                    <br/>
-                    <input type="submit" value="Submit"/>
-                </form>
-                <p>{this.state.responseToPost}</p>
-            </div>
-        );
-    }
+const reset = (event) => {
+    event.target.children.Author.value = "";
+    event.target.children.Title.value = "";
+    event.target.children.Content.value = "";
+    event.target.children.Tags.value = "";
 }
 
 export default CreatePost;
